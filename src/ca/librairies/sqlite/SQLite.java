@@ -3,21 +3,24 @@ package ca.librairies.sqlite;
 import ca.librairies.sqlite.exceptions.SQLiteArgumentNullException;
 import ca.librairies.sqlite.exceptions.SQLiteFolderNotExists;
 
-import javax.sql.RowSet;
+
 import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 
 /** Class that manages the SQLite calls. */
 public class SQLite {
     /** Path to the database folder. */
-    private String path;
+    private final String path;
+    /** The translator instance. */
+    private final SQLiteTranslator translator;
     /** Initializes a new instance of {@link SQLite} class.
      * @param path_folder Path to the database folder.
      * @param database_name Name of the database. */
@@ -29,6 +32,7 @@ public class SQLite {
         if(!this.folderExists(path_folder)) throw new SQLiteFolderNotExists(path_folder);
         // Set the SQLite database path.
         this.path = path_folder + File.separator + database_name + ".sqlite";
+        this.translator = new SQLiteTranslator();
     }
     /** Get the database connection.
      * @return Connection The {@link Connection} to the database. */
@@ -62,8 +66,8 @@ public class SQLite {
      * @param  request The request to execute.
      * @throws SQLiteArgumentNullException If the request is null or empty.
      * @throws SQLException If there is a SQL exception.
-     * @return ResultSet The SQL request result. */
-    public ResultSet execute(String request) throws SQLiteArgumentNullException, SQLException {
+     * @return ArrayList The SQL request result. */
+    public ResultSet execute(String request) throws SQLException, SQLiteArgumentNullException {
         // Check the preconditions.
         if(request == null || request.isBlank() || request.isEmpty()) throw new SQLiteArgumentNullException("SQLite", "execute", "request");
         // Get the SQLite database connection.
@@ -72,6 +76,25 @@ public class SQLite {
         ResultSet result = null;
         // Execute the query.
         if(this.isSelectRequest(request)) result = this.getDatasCopy(statement.executeQuery(request));
+        else statement.executeUpdate(request);
+        // Close the database connection.
+        connection.close();
+        return result;
+    }
+    /** Execute a request on the database.
+     * @param  request The request to execute.
+     * @throws SQLiteArgumentNullException If the request is null or empty.
+     * @throws SQLException If there is a SQL exception.
+     * @return ArrayList The SQL request result. */
+    public <T> ArrayList<T> execute(Class<T> class_object, String request) throws SQLiteArgumentNullException, SQLException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        // Check the preconditions.
+        if(request == null || request.isBlank() || request.isEmpty()) throw new SQLiteArgumentNullException("SQLite", "execute", "request");
+        // Get the SQLite database connection.
+        Connection connection = this.getConnection();
+        Statement statement = connection.createStatement();
+        ArrayList result = null;
+        // Execute the query.
+        if(this.isSelectRequest(request)) result = this.translator.translate(class_object, statement.executeQuery(request));
         else statement.executeUpdate(request);
         // Close the database connection.
         connection.close();
