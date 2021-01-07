@@ -1,4 +1,5 @@
 package ca.librairies.sqlite.exceptions;
+
 /*** Custom class {@link Exception} to manage when the folder not exists. */
 public class SQLiteFolderNotExists extends Exception {
     /** Initializes a new instance of {@link SQLiteFolderNotExists}.

@@ -1,8 +1,7 @@
-package ca.librairies.sqlite;
+package ca.librairies.sqlite.sources;
 
 import ca.librairies.sqlite.exceptions.SQLiteArgumentNullException;
 import ca.librairies.sqlite.exceptions.SQLiteFolderNotExists;
-
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 /** Class that manages the SQLite calls. */
 public class SQLite {
     /** Path to the database folder. */
-    private final String path;
+    protected final String path;
     /** The translator instance. */
     private final SQLiteTranslator translator;
     /** Initializes a new instance of {@link SQLite} class.

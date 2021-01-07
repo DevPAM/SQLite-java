@@ -1,4 +1,5 @@
 package ca.librairies.sqlite.exceptions;
+
 /** Custom class {@link Exception} to manage null argument. */
 public class SQLiteArgumentNullException extends Exception {
     /** Initializes a new instance of {@link SQLiteArgumentNullException}.

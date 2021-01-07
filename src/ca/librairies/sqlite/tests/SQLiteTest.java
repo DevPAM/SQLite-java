@@ -1,6 +1,6 @@
 package ca.librairies.sqlite.tests;
 
-import ca.librairies.sqlite.SQLite;
+import ca.librairies.sqlite.sources.SQLite;
 import ca.librairies.sqlite.exceptions.SQLiteArgumentNullException;
 import ca.librairies.sqlite.exceptions.SQLiteFolderNotExists;
 import org.junit.jupiter.api.Assertions;

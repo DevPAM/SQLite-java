@@ -1,4 +1,4 @@
-package ca.librairies.sqlite;
+package ca.librairies.sqlite.sources;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
